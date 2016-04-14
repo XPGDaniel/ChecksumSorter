@@ -15,12 +15,16 @@ namespace FVA2MD5
             int StartingPoint = 0;
             string checksumfile = new FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location).Directory.FullName;
             string output = "";
-            List<string> CandidateList = GetFiles(checksumfile);
+            List<string> CandidateList = new List<string>();
+            List<FileStruct> outputlist = null;
             if (args.Length > 0 && File.Exists(args[0]))
             {
                 CandidateList.Add(args[0]);
             }
-            List<FileStruct> outputlist = null;
+            else
+            {
+                CandidateList = GetFiles(checksumfile);
+            }
             Console.WriteLine("No. of FVAs or md5s : " + CandidateList.Count);
             for (int i = StartingPoint; i < CandidateList.Count; i++)
             {
@@ -61,8 +65,8 @@ namespace FVA2MD5
 
                 }
                 //Create CultureInfo
-                System.Globalization.CultureInfo ci = new System.Globalization.CultureInfo("zh-tw");
-                StringComparer cmp = StringComparer.Create(ci, false);
+                //System.Globalization.CultureInfo ci = new System.Globalization.CultureInfo("zh-tw");
+                //StringComparer cmp = StringComparer.Create(ci, false);
                 int subfolderindex = outputlist.FindIndex(a => a.Name.Contains("\\"));
                 var firsthalf = outputlist.Take(subfolderindex).OrderBy(x => x.Name).ToList();
                 var Secondhalf = outputlist.Skip(subfolderindex).OrderBy(x => x.Name).ToList();
