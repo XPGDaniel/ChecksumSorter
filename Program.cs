@@ -19,7 +19,11 @@ namespace FVA2MD5
             List<FileStruct> outputlist = null;
             if (args.Length > 0 && File.Exists(args[0]))
             {
-                CandidateList.Add(args[0]);
+                foreach (var s in args)
+                {
+                    CandidateList.Add(s);
+                }
+                checksumfile = Path.GetDirectoryName(args[0]);
             }
             else
             {
