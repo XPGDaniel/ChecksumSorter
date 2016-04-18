@@ -81,6 +81,7 @@ namespace FVA2MD5
                     { }
                     foreach (var fss in newlist)
                     {
+                        if (!fss.Name.ToLowerInvariant().Contains("thumbs.db"))
                         using (StreamWriter file = File.AppendText(output))
                         {
                             file.WriteLine(fss.hash + " *" + fss.Name);
