@@ -14,9 +14,11 @@ namespace FVA2MD5
         {
             int StartingPoint = 0;
             string checksumfile = new FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location).Directory.FullName;
+            string fakepath = @"C:\";
             string output = "";
             List<string> CandidateList = new List<string>();
             List<FileStruct> outputlist = null;
+            //args = new string[] {@"C:\Users\Dev\Source\Repos\ChecksumSorter\bin\Debug\Work_20160425.md5"};
             if (args.Length > 0 && File.Exists(args[0]))
             {
                 foreach (var s in args)
@@ -40,13 +42,13 @@ namespace FVA2MD5
                         outputlist = xmlDoc.Descendants("fvx")
                             .Elements().Select(entry => new FileStruct
                             {
-                                Name = Path.Combine(checksumfile, entry.Attribute("name").Value),
+                                Name = Path.Combine(fakepath, entry.Attribute("name").Value),
                                 hash = entry.Element("hash").Value.Trim(),
                             })
                             .OrderBy(r => Path.GetDirectoryName(r.Name))
                             .Select(entry => new FileStruct
                             {
-                                Name = entry.Name.Replace(checksumfile + "\\", ""),
+                                Name = entry.Name.Replace(fakepath, ""),
                                 hash = entry.hash,
                             }).ToList();
                         output = Path.Combine(checksumfile, Path.GetFileNameWithoutExtension(CandidateList[i]) + ".md5");
@@ -55,13 +57,13 @@ namespace FVA2MD5
                         List<string> md5lines = File.ReadAllLines(CandidateList[i]).ToList();
                         outputlist = md5lines.Select(entry => new FileStruct
                         {
-                            Name = Path.Combine(checksumfile, entry.Trim().Split('*')[1].Trim()),
+                            Name = Path.Combine(fakepath, entry.Trim().Split('*')[1].Trim()),
                             hash = entry.Trim().Split('*')[0].Trim(),
                         })
                         .OrderBy(r => Path.GetDirectoryName(r.Name))
                         .Select(entry => new FileStruct
                         {
-                            Name = entry.Name.Replace(checksumfile + "\\", ""),
+                            Name = entry.Name.Replace(fakepath, ""),
                             hash = entry.hash,
                         }).ToList();
                         output = Path.Combine(checksumfile, Path.GetFileNameWithoutExtension(CandidateList[i]) + "-Sorted.md5");
@@ -77,15 +79,27 @@ namespace FVA2MD5
                 var newlist = Secondhalf.Concat(firsthalf).ToList();
                 if (newlist.Any())
                 {
+                    StringBuilder builder = new StringBuilder();
                     using (FileStream file = File.Create(output))
                     { }
                     foreach (var fss in newlist)
                     {
                         if (!fss.Name.ToLowerInvariant().Contains("thumbs.db"))
-                        using (StreamWriter file = File.AppendText(output))
                         {
-                            file.WriteLine(fss.hash + " *" + fss.Name);
+                            builder.Append(fss.hash + " *" + fss.Name).AppendLine();
                         }
+                    }
+                    if (builder.Length > 0)
+                    {
+                        using (TextWriter writer = File.CreateText(output))
+                        {
+                            writer.Write(builder.ToString());
+                        }
+                        builder.Clear();
+                        //using (StreamWriter file = File.AppendText(output))
+                        //{
+                        //    file.WriteLine(fss.hash + " *" + fss.Name);
+                        //}
                     }
                 }
             }
