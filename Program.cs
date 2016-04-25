@@ -96,10 +96,6 @@ namespace FVA2MD5
                             writer.Write(builder.ToString());
                         }
                         builder.Clear();
-                        //using (StreamWriter file = File.AppendText(output))
-                        //{
-                        //    file.WriteLine(fss.hash + " *" + fss.Name);
-                        //}
                     }
                 }
             }
